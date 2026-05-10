@@ -6,5 +6,5 @@
 *.bin
 *.hex
 *.d
-
+compile_flags.txt
 rgbw_driver
