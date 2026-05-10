@@ -1,0 +1,10 @@
+*.o
+*.a
+*.so
+*.out
+*.elf
+*.bin
+*.hex
+*.d
+
+rgbw_driver
