@@ -33,6 +33,9 @@ I2C_Error_t I2C_Read(const I2C_Ch_t i2c_ch, uint8_t* data_bytes, const uint16_t 
 
 I2C_Error_t I2C_Write(const I2C_Ch_t i2c_ch, const uint8_t* data_bytes, const uint16_t length)
 {
-    printf("[I2C] Write: ch=%d, data[0]=0x%02X, len=%d\n", i2c_ch, data_bytes[0], length);
+    printf("[I2C] Write: ch=%d, len=%d, data=[", i2c_ch, length);
+    for (uint16_t i = 0; i < length; i++) 
+        printf(" 0x%02X", data_bytes[i]);
+    printf(" ]\n");
     return I2C_ERR_SUCCESS;
 }

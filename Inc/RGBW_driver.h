@@ -1,6 +1,7 @@
 #ifndef RGBW_DRIVER_H
 #define RGBW_DRIVER_H
 
+#include "I2C_API.h"
 #include <stdint.h>
 
 
@@ -42,7 +43,7 @@
 #define RGBW_FREQ_3KHZ          (0x00U)  /**< 3kHz PWM frequency */
 #define RGBW_FREQ_22KHZ         (0x01U)  /**< 22kHz PWM frequency */
 #define RGBW_RESET              (0x00U)  /**< Reset all registers */
-
+#define RGBW_LED_CTRL_ALLOWED   (0x07U)  /**< Allowed LED control bits [2:0] */
 
 /** @brief Enumeration defining the error of RGBW_driver */
 typedef enum
@@ -53,53 +54,67 @@ typedef enum
 } RGBW_Error_t;
 
 
+typedef enum
+{
+    RGBW_CH_D1         = (1U),
+    RGBW_CH_D2         = (2U),
+    RGBW_CH_D3         = (3U),
+    RGBW_CH_D4         = (4U)
+} RGBW_Channel_t;
+
+
+typedef struct
+{
+    I2C_Ch_t   i2c_ch;
+    I2C_Freq_t i2c_freq; 
+    uint8_t    i2c_addr;
+} RGBW_Dev_t;
+
 /**
 * @brief Initialize RGBW LED controller.
+* @param dev Pointer to RGBW device descriptor.
 * @return RGBW_Error_t Status of the operation.
 */
-RGBW_Error_t RGBW_Init(void);
-
-
-/**
-* @brief Switch off all LEDs.
-* @return RGBW_Error_t Status of the operation.
-*/
-RGBW_Error_t RGBW_LedsOff(void);
+RGBW_Error_t RGBW_Init(const RGBW_Dev_t* dev);
 
 
 /**
 * @brief Set brightness for a single channel.
+* @param dev Pointer to RGBW device descriptor.
 * @param channel Channel number (1-4).
 * @param value Brightness value (0-255).
 * @return RGBW_Error_t Status of the operation.
 */
-RGBW_Error_t RGBW_SetBrightness(uint8_t channel, uint8_t value);
+RGBW_Error_t RGBW_SetBrightness(const RGBW_Dev_t* dev, RGBW_Channel_t channel, uint8_t value);
 
 
 /**
 * @brief Set mode of channel.
-* @param channel Channel number (1-4).
-* @param state 2:0 bits mode (0b000-0b111).
+* @param dev Pointer to RGBW device descriptor.
+* @param channel Channel number (RGBW_CH_D1 - RGBW_CH_D4).
+* @param state LED control value (bit 0: on/off, bits 2:1: current setting). 
 * @return RGBW_Error_t Status of the operation.
 */
-RGBW_Error_t RGBW_SetChannel(uint8_t channel, uint8_t state);
+RGBW_Error_t RGBW_SetChannel(const RGBW_Dev_t* dev, RGBW_Channel_t channel, uint8_t state);
 
 
 /**
 * @brief Set mode of all channels.
-* @param state 2:0 bits mode (0b000-0b111).
+* @param dev Pointer to RGBW device descriptor.
+* @param state LED control value (bit 0: on/off, bits 2:1: current setting).
 * @return RGBW_Error_t Status of the operation.
 */
-RGBW_Error_t RGBW_SetAllChannels(uint8_t state);
+RGBW_Error_t RGBW_SetAllChannels(const RGBW_Dev_t* dev, uint8_t state);
 
 
 /**
 * @brief Set color by RGB code.
+* @param dev Pointer to RGBW device descriptor.
 * @param r Brightness value of red color (0-255).
 * @param g Brightness value of green color (0-255).
 * @param b Brightness value of blue color (0-255).
 * @return RGBW_Error_t Status of the operation.
 */
-RGBW_Error_t RGBW_SetRGB(uint8_t r, uint8_t g, uint8_t b);
+RGBW_Error_t RGBW_SetRGB(const RGBW_Dev_t* dev, uint8_t r, uint8_t g, uint8_t b);
 
 #endif
